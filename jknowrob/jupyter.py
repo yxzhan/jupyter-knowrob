@@ -8,7 +8,7 @@ from ipykernel.kernelbase import Kernel
 
 def main():
     from ipykernel.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=SwiplKernel)
+    IPKernelApp.launch_instance(kernel_class=KnowrobKernel)
 
 
 class KnowrobKernel(Kernel):
