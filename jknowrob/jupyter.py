@@ -75,8 +75,8 @@ class KnowrobKernel(Kernel):
                         break
                     else:
                         raise PrologException('Unknown query status {}'.format(next_solution.status))
-                finally:
-                    self.finish()
+            finally:
+                self.finish()
         return {'status': 'ok',
                 # The base class increments the execution
                 # count
