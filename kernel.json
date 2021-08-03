@@ -1,0 +1,8 @@
+{
+    "argv": [
+        "jknowrobkernel",
+        "-f",
+        "{connection_file}"
+    ],
+    "display_name": "KnowRob"
+}
