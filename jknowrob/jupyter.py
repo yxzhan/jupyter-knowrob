@@ -5,6 +5,12 @@ import json
 """SWI-Prolog kernel wrapper"""
 from ipykernel.kernelbase import Kernel
 
+
+def main():
+    from ipykernel.kernelapp import IPKernelApp
+    IPKernelApp.launch_instance(kernel_class=SwiplKernel)
+
+
 class KnowrobKernel(Kernel):
     implementation = 'KnowRob'
     implementation_version = '0.0.1'
@@ -83,7 +89,3 @@ class KnowrobKernel(Kernel):
                 'payload': [],
                 'user_expressions': {},
                }
-
-if __name__ == '__main__':
-    from ipykernel.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=KnowrobKernel)
