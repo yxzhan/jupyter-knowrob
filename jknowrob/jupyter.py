@@ -1,7 +1,6 @@
 import rospy
 from json_prolog_msgs.srv import PrologQuery, PrologNextSolution, PrologNextSolutionResponse, PrologFinish
 import json
-from werkzeug.exceptions import BadRequest
 
 """SWI-Prolog kernel wrapper"""
 from ipykernel.kernelbase import Kernel
