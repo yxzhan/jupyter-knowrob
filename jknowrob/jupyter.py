@@ -34,6 +34,8 @@ class KnowrobKernel(IPythonKernel):
         self._finished = False
         self.id = 0
 
+        self.ns_dict = dict()
+
         self._simple_query_srv = rospy.ServiceProxy(
             '{}/query'.format(self.name_space), PrologQuery)
         self._next_solution_srv = rospy.ServiceProxy(
@@ -41,11 +43,12 @@ class KnowrobKernel(IPythonKernel):
         self._finish_query_srv = rospy.ServiceProxy(
             '{}/finish'.format(self.name_space), PrologFinish)
         if self.wait_for_services:
-            rospy.loginfo('waiting for {} services'.format(self.name_space))
+            self.log.warn('waiting for {} services'.format(self.name_space))
             self._finish_query_srv.wait_for_service(timeout=self.timeout)
             self._simple_query_srv.wait_for_service(timeout=self.timeout)
             self._next_solution_srv.wait_for_service(timeout=self.timeout)
-            rospy.loginfo('{} services ready'.format(self.name_space))
+            self.log.warn('{} services ready'.format(self.name_space))
+            self.load_namespace()
 
 
     def finish(self):
@@ -56,7 +59,21 @@ class KnowrobKernel(IPythonKernel):
                 self._finished = True
 
 
+    def load_namespace(self):
+        self.id += 1
+        q = 'findall([_X, _Y], rdf_current_ns(_X, _Y), NS)'
+        self._simple_query_srv(id=str(self.id), query=q)
+        solution = json.loads(self._next_solution_srv(id=str(self.id)).solution)
+        self.log.warn('loaded namespaces')
+        self.log.warn(str(solution["NS"]))
+        for k, v in solution["NS"]:
+            self.ns_dict[v] = k + ':'
+        self.log.warn(str(self.ns_dict))
+
+
     def send_response_ok(self, output):
+        for ns, short in self.ns_dict.items():
+            output = output.replace(ns, short)
         stream_content = {'name': 'stdout', 'text': output}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
