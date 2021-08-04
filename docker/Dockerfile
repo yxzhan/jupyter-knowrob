@@ -16,13 +16,10 @@ RUN mkdir jknowrob
 RUN wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json -P ~/.local/share/jupyter/kernels/jknowrob
 
 # We need the json_prolog_msgs to communicate with KnowRob
-
 WORKDIR /home/ros/src
 RUN /usr/bin/python /opt/ros/noetic/bin/catkin_init_workspace
 RUN source /opt/ros/noetic/setup.bash
 RUN git clone https://github.com/code-iai/iai_common_msgs.git
-
-RUN ls
 
 WORKDIR /home/ros
 # Build the catkin workspace
