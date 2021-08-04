@@ -47,12 +47,19 @@ class KnowrobKernel(IPythonKernel):
             self._next_solution_srv.wait_for_service(timeout=self.timeout)
             rospy.loginfo('{} services ready'.format(self.name_space))
 
+
     def finish(self):
         if not self._finished:
             try:
                 self._finish_query_srv(id=str(self.id))
             finally:
                 self._finished = True
+
+
+    def send_response_ok(self, output):
+        stream_content = {'name': 'stdout', 'text': output}
+        self.send_response(self.iopub_socket, 'stream', stream_content)
+
 
     def do_execute(self, code, silent,
                    store_history=True,
@@ -71,6 +78,10 @@ class KnowrobKernel(IPythonKernel):
                 while not self._finished:
                     next_solution = self._next_solution_srv(id=str(self.id))
                     if (next_solution.status == PrologNextSolutionResponse.OK):
+                        solution = dict(json.loads(next_solution.solution))
+                        if (solution == dict()):
+                            self.send_response_ok('true')
+                            break
                         solutions.append(dict(json.loads(next_solution.solution)))
                         self.log.warn("Got solution", exc_info=True)
                     elif (next_solution.status == PrologNextSolutionResponse.WRONG_ID 
@@ -88,10 +99,7 @@ class KnowrobKernel(IPythonKernel):
                         if (len(solutions) > 0):
                             output = ';\n'.join([',\n'.join(['{}: {}'.format(k, v) for k, v in solDict.items()]) for solDict in solutions])
                         self.log.warn(output, exc_info=True)
-                        stream_content = {'name': 'stdout',
-                                            'text': output}
-                        self.send_response(self.iopub_socket,
-                                            'stream', stream_content)
+                        self.send_response_ok(output)
                         break
                     else:
                         raise PrologException('Unknown query status {}'.format(next_solution.status))
