@@ -86,6 +86,13 @@ class KnowrobKernel(IPythonKernel):
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
 
+    def create_query(self, code):
+        # TODO: At additional analsis and sanytizing
+        if ":-" in code:
+            return "cloud_consult_string(" + self.get_id() + ",\"" + code + "\")"
+        return code
+
+
     def do_execute(self, code, silent,
                    store_history=True,
                    user_expressions=None,
@@ -99,17 +106,23 @@ class KnowrobKernel(IPythonKernel):
             current_id = self.get_id()
             solutions = []
             self._finished = False
-            result = self._simple_query_srv(id=current_id, query=code)
+            # Create a query out of the input and send it to rosprolog
+            query = self.create_query(code)
+            result = self._simple_query_srv(id=current_id, query=query)
+            # Create the answer
             while not self._finished:
                 next_solution = self._next_solution_srv(id=current_id)
                 if (next_solution.status == PrologNextSolutionResponse.OK):
+                    # Collect the next solution
                     solution = dict(json.loads(next_solution.solution))
+                    #If the solution is a empty dict, the answer is true
                     if (solution == dict()):
                         self.send_response_ok('true')
                         break
                     solutions.append(dict(json.loads(next_solution.solution)))
                 elif (next_solution.status == PrologNextSolutionResponse.WRONG_ID 
                         or next_solution.status == PrologNextSolutionResponse.QUERY_FAILED):
+                    # Send error message
                     err_payload = {'ename': "Prolog Error",
                                     'evalue': "Prolog query failed",
                                     'traceback':['Prolog query failed: {}'.format(str(next_solution.solution))]}
@@ -119,7 +132,7 @@ class KnowrobKernel(IPythonKernel):
                     self.log.error('Prolog query failed: {}'.format(str(next_solution.solution)), exc_info=True)
                     break
                 elif (next_solution.status == PrologNextSolutionResponse.NO_SOLUTION):
-                    # We send back the result to the frontend.
+                    # If no additional solution are found send the response
                     output = 'false'
                     if (len(solutions) > 0):
                         output = ';\n'.join([',\n'.join(['{}: {}'.format(k, v) for k, v in solDict.items()]) for solDict in solutions])
