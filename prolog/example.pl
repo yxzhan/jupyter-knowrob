@@ -3,4 +3,4 @@
 	]).
 
 example_rule(A) :-
-	A = 'Hello World'.
+	A = 'Hello World2'.

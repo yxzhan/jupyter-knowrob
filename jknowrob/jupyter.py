@@ -53,7 +53,7 @@ class KnowrobKernel(IPythonKernel):
             self._simple_query_srv.wait_for_service(timeout=self.timeout)
             self._next_solution_srv.wait_for_service(timeout=self.timeout)
             self.log.warn('{} services ready'.format(self.name_space))
-            self.load_namespace()
+            self.init_query()
 
 
     def get_id(self):
@@ -68,10 +68,10 @@ class KnowrobKernel(IPythonKernel):
                 self._finished = True
 
 
-    def load_namespace(self):
+    def init_query(self):
         self.id += 1
         current_id = self.get_id()
-        q = 'findall([_X, _Y], rdf_current_ns(_X, _Y), NS)'
+        q = 'register_ros_package(knowrob_cloud), findall([_X, _Y], rdf_current_ns(_X, _Y), NS)'
         self._simple_query_srv(id=current_id, query=q)
         solution = json.loads(self._next_solution_srv(id=current_id).solution)
         self.log.warn('loaded namespaces')
