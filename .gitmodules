@@ -1,0 +1,3 @@
+[submodule "knowrob_cloud"]
+	path = knowrob_cloud
+	url = ./knowrob_cloud/

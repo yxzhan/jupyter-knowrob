@@ -18,6 +18,9 @@ services:
       - KNOWROB_MONGODB_URI=mongodb://127.0.0.1:27018/?appname=knowrob
     network_mode: host
     entrypoint: ["/run_knowrob_local.sh"]
+    volumes:
+      - ./knowrob_cloud:/home/ros/src/knowrob_cloud
+      - ./prolog:/prolog
 
       # the KnowRob container
   jupyter_knowrob:
@@ -28,4 +31,3 @@ services:
     network_mode: host
     volumes:
       - ./lectures:/lectures
-      - ./prolog:/prolog
