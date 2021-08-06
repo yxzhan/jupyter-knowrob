@@ -27,4 +27,5 @@ services:
       - 'knowrob'
     network_mode: host
     volumes:
-      - ../lectures:/lectures
+      - ./lectures:/lectures
+      - ./prolog:/prolog
