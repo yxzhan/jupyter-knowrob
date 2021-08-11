@@ -4,7 +4,7 @@ A Jupyter Kernel for [KnowRob](https://github.com/knowrob/knowrob).
 Inspired by [ayceesrk/jupyter-swi-prolog](https://github.com/kayceesrk/jupyter-swi-prolog)
 
 ## Prerequisite
-1. Jupyter notebook installed on your system `jupyter notebook`
+1. Jupyter notebook installed on your system `pip install jupyter`
 
 ## Supported environments
 
