@@ -30,4 +30,5 @@ WORKDIR /lectures
 
 # Configure container startup
 COPY run_notebook.sh /run_notebook.sh
+COPY /knowrob_cloud /home/ros/src/knowrob_cloud
 ENTRYPOINT ["/run_notebook.sh"]
