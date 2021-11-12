@@ -3,6 +3,9 @@ A Jupyter Kernel for [KnowRob](https://github.com/knowrob/knowrob).
 
 Inspired by [ayceesrk/jupyter-swi-prolog](https://github.com/kayceesrk/jupyter-swi-prolog)
 
+## Prerequisite
+1. Jupyter notebook installed on your system `pip install jupyter`
+
 ## Supported environments
 
 Only **python3** is supported
@@ -14,5 +17,5 @@ Only **python3** is supported
 3. Change directory to your jupyters kernel directory. Typically `~/.local/share/jupyter/kernels`.
 4. `mkdir jknowrob && cd jknowrob`
 5. Install kernel spec: `wget https://raw.githubusercontent.com/sasjonge/jupyter-knowrob/master/kernel.json`
-6. Restart jupyter
+6. Restart jupyter: `jupyter notebook`
 7. Profit
