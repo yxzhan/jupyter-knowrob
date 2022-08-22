@@ -90,8 +90,7 @@ class KnowrobKernel(IPythonKernel):
         # TODO: At additional analsis and sanytizing
         if ":-" in code:
             return "cloud_consult_string(" + self.get_id() + ",\"" + code + "\")"
-        else if:
-            return "openease_query(" + code + ")"
+        return code
 
 
     def do_execute(self, code, silent,
