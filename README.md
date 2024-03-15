@@ -1,4 +1,7 @@
 # jknowrob
+
+[![Binder](https://binder.intel4coro.de/badge_logo.svg)](https://binder.intel4coro.de/v2/gh/yxzhan/jupyter-knowrob.git/master?labpath=lectures%2Ftut2-semweb.ipynb)
+
 A Jupyter Kernel for [KnowRob](https://github.com/knowrob/knowrob).
 
 Inspired by [ayceesrk/jupyter-swi-prolog](https://github.com/kayceesrk/jupyter-swi-prolog)
