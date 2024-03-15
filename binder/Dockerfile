@@ -16,7 +16,7 @@ RUN echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-${
     tee /etc/apt/sources.list.d/mongodb-org-${MONGODEB_VERSION}.list
 RUN apt update && apt install -y mongodb-org
 RUN mkdir -p /data/db && \
-    chown -R ${NB_USER}:users /data/db 
+    chown -R ${NB_USER}:users /data/db
 
 # Install Knowrob
 USER ${NB_USER}
@@ -32,16 +32,8 @@ USER root
 RUN rosdep update && rosdep install -y -r --ignore-src --from-paths . && \
     rosdep fix-permissions
 
-# Install jupyter knowrob kernel
-USER ${NB_USER}
-COPY --chown=${NB_USER}:users . ${HOME}/jupyter-knowrob
-WORKDIR ${HOME}/jupyter-knowrob
-RUN pip install .
-ARG JK_KERNEL=${HOME}/.local/share/jupyter/kernels/jknowrob
-RUN mkdir -p ${JK_KERNEL} && cp kernel.json ${JK_KERNEL}
-RUN cp -R knowrob_cloud ${KNOWROB_WS}/src/
-USER root
-RUN cp -R prolog /
+COPY --chown=${NB_USER}:users knowrob_cloud ${KNOWROB_WS}/src/knowrob_cloud
+COPY --chown=${NB_USER}:users prolog /prolog
 
 # Build catkin workspace
 USER ${NB_USER}
@@ -51,6 +43,24 @@ RUN source ${ROS_PATH}/setup.bash && catkin_make
 # Source knowrob workspace on a new bash shell
 RUN echo "source ${KNOWROB_WS}/devel/setup.bash" >> ${HOME}/.bashrc
 
+# Install jupyter knowrob kernel
+USER ${NB_USER}
+COPY --chown=${NB_USER}:users . ${HOME}/jupyter-knowrob
+WORKDIR ${HOME}/jupyter-knowrob
+RUN pip install .
+COPY --chown=${NB_USER}:users ./kernel.json ${HOME}/.local/share/jupyter/kernels/jknowrob/kernel.json
+
+# Download the example_neem
+USER root
+RUN mkdir /neem_data && chown ${NB_USER}:users /neem_data
+USER ${NB_USER}
+RUN cd /neem_data && \
+    ln -s /neem_data ${HOME}/jupyter-knowrob/lectures/data && \
+    wget https://seafile.zfn.uni-bremen.de/f/b66a71b257084d459b6c/?dl=1 -O example_neem.zip && \
+    unzip example_neem.zip && \
+    mv example_neem/* ./ && \
+    rm -r example_neem example_neem.zip
+
 # jupyterlab interface configuration
 COPY --chown=${NB_USER}:users binder/jupyter-settings.json /opt/conda/share/jupyter/lab/settings/overrides.json
 COPY --chown=${NB_USER}:users binder/webapps.json ${ROS_WS}/src/rvizweb/webapps/app.json
@@ -59,5 +69,5 @@ COPY --chown=${NB_USER}:users binder/webapps.json ${ROS_WS}/src/rvizweb/webapps/
 COPY --chown=${NB_USER}:users binder/entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 
-WORKDIR ${HOME}/jupyter-knowrob
+WORKDIR ${HOME}/jupyter-knowrob/lectures
 RUN ln -s ${KNOWROB_WS} ${PWD}/KNOWROB_WS

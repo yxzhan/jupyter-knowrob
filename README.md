@@ -1,6 +1,6 @@
 # jknowrob
 
-[![Binder](https://binder.intel4coro.de/badge_logo.svg)](https://binder.intel4coro.de/v2/gh/yxzhan/jupyter-knowrob.git/master?labpath=lectures%2Ftut2-semweb.ipynb)
+[![Binder](https://binder.intel4coro.de/badge_logo.svg)](https://binder.intel4coro.de/v2/gh/yxzhan/jupyter-knowrob.git/master?labpath=lectures%2Fneem_init.ipynb)
 
 A Jupyter Kernel for [KnowRob](https://github.com/knowrob/knowrob).
 
